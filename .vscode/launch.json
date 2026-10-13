@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Populous}",
+            "name": "Debug popassets",
+            "target": "popassets",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug popassets"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Populous}",
+            "name": "Release popassets",
+            "target": "popassets",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release popassets"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Populous}",
+            "name": "Debug Populous",
+            "target": "Populous",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Populous"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Populous}",
+            "name": "Release Populous",
+            "target": "Populous",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Populous"
+        }
+    ]
+}

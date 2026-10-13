@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+*.adf
+/dump/
+.DS_Store
+/re/work/
+/Populous.app/

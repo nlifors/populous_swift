@@ -1,0 +1,146 @@
+# Names recovered for the DAD memory image (load base $5E7C4, A4 = $7AB96).
+# <hex address> <name>   -- applied by re/scripts/PopulousSetup.java
+0006c25e rng_next              ; seed = (seed * 9377 + 9439) & 0x7fff, returns seed
+00074528 rng_seed              ; word
+0007452a world_seed            ; word, seed the current world was built from
+0007452c terrain_type          ; word, 0-3 = land0..land3
+0005ebb6 setup_world
+0005f22c reset_world_state
+0005f424 generate_heights      ; three raise_random_walk passes
+0005f450 raise_random_walk     ; random walk raising points until one reaches height 6
+0005f4e0 raise_point           ; +1 at a corner, recursing so neighbours differ by <= 1
+00064a18 scatter_scenery       ; rocks (tiles 47-49) and trees (tiles 50-52)
+000759cc altitude              ; 65x65 words, corner heights 0-8
+00077ace map_tile              ; 64x64 bytes, land-set tile index of each cell
+00079ace map_object            ; 64x64 bytes, overlay tile (trees, buildings)
+0007cace map_who               ; 64x64 bytes, index+1 of the person standing there
+00075962 flyers                ; 0x16-byte records, slots 0xd1-0xd2 of the people table
+0005f640 update_tiles           ; (x0, y0, x1, y1): tile shape + base height from corner heights
+0005f76e redraw_map_region
+0006400e place_starting_people
+00078ace map_height            ; 64x64 bytes, base height of each cell
+00073018 world_number          ; word, -1 for a custom game
+0007301a level_record          ; the 10 bytes read from level.dat
+000676ac choose_world          ; world-name entry; loads level_record, returns world number
+00069a7a draw_tile              ; asm: D0/D1 = view cell, D2 = lift in pixels, D3 = tile
+00069af6 draw_view              ; (x, y): 8x8 isometric close-up plus cliff faces
+00069cd2 blit_sprite16          ; asm: 16x16 masked sprite, A2 = data, A0 = screen
+00069d20 draw_person_in_view
+0006a162 copy_background        ; background screen -> back buffer
+0006a188 copy_screen            ; (from, to)
+0006a388 load_land              ; reads land<n>: header tables, minimap colours, tiles
+0006a662 set_draw_screen
+0006a6ec swap_screens
+0006c27a plot_pixel             ; (screen, x, y, colour)
+00072ece minimap_colors         ; 72 bytes, indexed by tile; first 16 come from the land file
+000743b6 land_tiles_ptr
+000743ae sprites_ptr
+000743ba background_screen_ptr
+0007452e back_screen_ptr
+00074532 front_screen_ptr
+0007dc4a draw_screen_ptr
+000759bc skull_cell             ; word, cell of the magnet drawn with tile 46
+000759be ankh_cell              ; word, cell of the magnet drawn with tile 45
+0005ed18 main_loop
+00060b28 update_people          ; the per-tick people update
+00064b40 update_flyers
+0006378c create_person          ; (owner, x, y, as_leader)
+000628fa animate_person
+0006281c remove_person
+0006c412 blit_sprite            ; (screen, x, y, sprite) 16x16, clipped at the bottom
+0006c502 blit_large_sprite      ; 32x32, for flyers
+0006a0b4 queue_view_sprite      ; asm: adds a sprite (plus leader/selection marker) to the frame list
+0007476c people                 ; 211 records of 22 bytes
+000759a4 person_count           ; word
+0007453c players                ; 2 records of 16 bytes: leader, magnet cell, ?, houses, population, mana?
+0007453a player_side            ; word, which side the human plays
+00074536 view_x                 ; word, 0-56
+00074538 view_y                 ; word, 0-56
+00074560 phase                  ; word, flips 0/1 every frame
+000759b0 tick_count             ; word
+00074562 view_sprite_count      ; word
+00074568 view_sprites           ; 8 bytes each: x, y, sprite, person index + 1
+0006dc60 step_check             ; (cell, offset): 0 ok, 1 off map, 2 rock tile 47, 3 water
+0006dcce land_score             ; (owner, cell): 0 = cannot settle, 65..290 by free land in 17 cells, 0xBEA = castle
+00062a64 update_house           ; (person*, removing): writes house object + field tiles around the cell
+00064720 set_magnet             ; (owner, cell); owner 0 = ankh, owner 1 = skull
+000619f2 move_walker            ; (person*, index)
+00061cc8 choose_step_settle     ; (person*, index): look for land / enemies / friends, returns offset or 999
+00061ffc choose_step_magnet     ; (person*, index): head for magnet, leader or target
+00072f8a ring_offsets           ; 25 words: cell, 4 edge, 4 corner neighbours, then the next ring
+00072f7a direction_offsets      ; 8 words clockwise from north: -64,-63,1,65,64,63,-1,-65
+00072f68 direction_from_delta   ; 9 words indexed by (dy + (dx+1)*3 + 1)
+00072f18 opposite_direction     ; 8 words
+00072e14 player_orders          ; 2 records of 0x2e bytes (pending action, AI state)
+000759ae selected_person        ; word, index + 1
+000759c6 armageddon_flag        ; set by the Armageddon power (and by the integrity checks as punishment)
+0007daf6 land_walk_cost         ; word 0 of the land file: life lost per step
+0007db28 land_table_a           ; 11 words from the land file
+0007dafc land_table_b           ; 11 words (mana gained per house size)
+0007db12 land_table_c           ; 11 words
+0007db40 land_table_d           ; 11 words
+0007aace map_visits             ; 64x64 words: how often each cell has been walked over
+00062cb2 fight_round            ; (person*, index): both roll rng%3+1 times life; both lose strength*(lower/100)+10
+00062e62 end_fight              ; (winner, loser)
+000632e2 start_fight            ; (index, other)
+00063414 join_fight             ; (index, other)
+000626dc merge_people           ; (index, into)
+00062612 retarget_knight        ; (person*): long14 = address of nearest enemy
+000603f2 lower_point            ; mirror of raise_point
+00063a12 raise_land             ; (owner, x, y): costs 10 + 4 per corner moved, needs 10 mana
+000638fc lower_land             ; (owner, x, y)
+00064234 earthquake             ; (owner, x, y)
+000605c8 draw_status            ; shield details for the selected person, population bars
+0006578c computer_strategy      ; (side): settle/gather mode and magnet placement
+000653da computer_powers        ; (side): chooses divine powers
+000651f8 walker_assist          ; (cell, owner): orders the odd corner of a sloping cell fixed
+0006504a house_assist           ; (cell, owner): orders land round a house evened out
+00064e46 release_flyer          ; not yet ported
+000713d6 long_divide            ; D0 / D1
+000712fe long_multiply          ; D0 * D1
+0007db56 land_bounties          ; 3 words: mana for beating a walker, knight, leader
+00072fe4 lowest_mana            ; long, -250
+00072fe8 mana_to_reshape        ; long, 10
+000759c0 kills                  ; 2 bytes, fights won per side
+0006b1b2 process_orders         ; per frame: serial sync, then carry out both sides' orders
+0006b7d0 clear_orders
+0006b958 meta_order             ; (owner, x, sub): sub 1 = set mode x, 3/4/5 = powers, others UI
+0006355c place_magnet           ; (owner, x, y): costs 200, needs a leader
+0005f884 handle_click           ; icon panel, view arrows, minimap
+00063b2e view_cursor            ; picks the corner under the mouse, places raise/lower/magnet orders
+00060550 pick_person            ; click on a person in the view to select
+00060a5a draw_mana_bar
+00074262 assist_offsets         ; 81 (dx, dy) byte pairs searched round a house
+00072fe4 mana_thresholds        ; 11 longs: -250, 10, 200, 2500, 5000, 7500, 10000, 40000, 80000, 160000, 1999999
+000744f0 mouse_x                ; word
+000759b4 mouse_y                ; word
+00072db4 cursor_mode            ; word: 1 inspect, 2 reshape, |4 place magnet, |8 another placed power
+00074564 visible_states         ; word: OR of states of people drawn this frame
+00064756 swamp                  ; (owner, x, y): 30 tries within 3 cells; cost 5000, ability bit 0x10
+0006446c volcano                ; (owner, x, y): cost 10000, ability bit 0x40
+0006487e knight                 ; (owner): leader becomes a knight; cost 7500, bit 0x20
+00063f0a flood                  ; (owner): every corner down one; cost 40000, bit 0x80
+00064982 armageddon             ; (owner): cost 80000, bit 0x100; sets the armageddon flag
+000656aa computer_aim           ; (side, orders*): target for the computer's volcano/earthquake
+00068ca2 end_of_world           ; (lost): score screen; a win advances the conquest via advance_world
+000691f8 advance_world          ; (score): next = current + score/5000 + 1, rounded up to a multiple of 5, max 2470
+0006961a world_name             ; (buffer, code): start[code&31] + middle[(code>>5)&31] + end[(code>>10)&31]
+00069720 world_from_name        ; (text): searches 0,5,...,5000 for the matching name code
+000740e2 name_starts            ; 32 string pointers
+000741e2 name_middles           ; 32 string pointers
+00074162 name_ends              ; 32 string pointers
+000759b8 score                  ; long, the human side's points this world
+000759c4 conquest_world         ; word, world number reached in the conquest
+0006c342 draw_bar               ; (screen, byte column, y, max, value, colour): 4 pixels wide, upwards
+0006c70a vblank_interrupt       ; mouse, keyboard, then music step every 10 interrupts, effects and heartbeat
+0006d570 play_instrument        ; (instrument, channel): louder-or-equal instruments cut in; optional looped tail
+0006d646 queue_audio_write      ; (io, instrument*, offset, cycles)
+0006d6ca sequencer_step         ; reads 4 channel bytes of the current pattern step; byte - 0x41 = instrument
+0006d9f2 load_music             ; (filename): gmusic1 in play, gwords for the lord's speech
+0006a71a plot_on_minimap        ; (cell, colour): the blinking dots for people and houses
+0007daf2 pending_sound          ; word: instrument number of the effect to play at the next interrupt
+00072dae music_on               ; word
+00072db0 effects_on             ; word
+00072dac heartbeat_period       ; word: max(50 - 2 * enemy/own population, 7) interrupts
+0006a9de save_game              ; (filename): magic FFFFB615, land, players, people, orders, globals, checksum
+0006add0 load_game              ; (filename): checks only the magic, then refreshes magnets, count, knights
