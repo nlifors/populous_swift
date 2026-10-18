@@ -14,6 +14,8 @@ public struct Renderer: Sendable {
     static let rightCliffSprite = 77
     static let ankhTile = 45
     static let skullTile = 46
+    /// The small diamond that marks the close-up's position on the minimap.
+    static let viewMarkerSprite = 0x54
 
     public let assets: GameAssets
 
@@ -122,6 +124,7 @@ public struct Renderer: Sendable {
         let land = assets.landSets[terrain]
         var screen = assets.board.image
         drawMinimap(world, land: land, into: &screen)
+        drawViewMarker(viewX: viewX, viewY: viewY, into: &screen)
         drawMinimapPeople(world, phase: phase, into: &screen)
         drawManaPointer(world, into: &screen)
         drawView(world, land: land, viewX: viewX, viewY: viewY, phase: phase, into: &screen)
@@ -150,6 +153,13 @@ public struct Renderer: Sendable {
                 if lit, (1...5).contains(screen[x, y]) { screen[x, y] = min(screen[x, y] + 2, 5) }
             }
         }
+    }
+
+    /// The marker on the minimap for where the close-up is ($5EEF2): sprite $54 three
+    /// pixels up and left of the view's centre cell, drawn before the blinking dots.
+    func drawViewMarker(viewX: Int, viewY: Int, into screen: inout IndexedImage) {
+        let centre = Self.minimapPoint(x: viewX + 3, y: viewY + 3)
+        screen.draw(assets.sprites[Self.viewMarkerSprite], x: centre.x - 3, y: centre.y - 3)
     }
 
     /// The blinking dots on the minimap ($6A71A): houses on one phase, people on the

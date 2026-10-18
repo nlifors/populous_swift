@@ -64,6 +64,9 @@ Build the app:
 open Populous.app
 ```
 
+The app's Dock icon is original art drawn by `tools/make-icon.py` (needs Pillow);
+`Populous.icns` is checked in, so you only run that script to change the icon.
+
 The first time, the game asks for your disk image. To skip the question, put the
 `.adf` file next to `Populous.app`. The choice is remembered.
 

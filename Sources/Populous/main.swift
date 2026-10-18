@@ -948,6 +948,11 @@ if ProcessInfo.processInfo.environment["POPULOUS_SELFTEST"] == nil {
     window.title = "Populous"
 }
 
+// POPULOUS_MANUAL_SHOTS=<folder> writes pictures of every screen for the manual.
+if let folder = ProcessInfo.processInfo.environment["POPULOUS_MANUAL_SHOTS"] {
+    takeManualShots(view: view, window: window, folder: folder)
+}
+
 // POPULOUS_SELFTEST=1 feeds the view a few synthetic clicks and reports what they
 // did, without waiting for a person at the mouse.
 if ProcessInfo.processInfo.environment["POPULOUS_SELFTEST"] != nil {
