@@ -44,6 +44,28 @@ struct SoundDriverTests {
         #expect(driver.channels[2].volume == loud)
     }
 
+    @Test func loopedEffectComesToAnEnd() throws {
+        var driver = try driver()
+        driver.musicOn = false
+        driver.play(effect: SoundDriver.Effect.earthquake)
+        driver.interrupt()
+        #expect(driver.channels[2].queue.count == 2)
+        var left = [Float](repeating: 0, count: 44100)
+        var right = left
+        var seconds = 0
+        while driver.channels[2].isBusy, seconds < 30 {
+            left.withUnsafeMutableBufferPointer { l in
+                right.withUnsafeMutableBufferPointer { r in
+                    driver.render(left: l.baseAddress!, right: r.baseAddress!, frames: l.count, sampleRate: 44100)
+                }
+            }
+            seconds += 1
+        }
+        // One pass and seven repeats of a 0.7 s rumble.
+        #expect(!driver.channels[2].isBusy)
+        #expect((5...6).contains(seconds))
+    }
+
     @Test func rendersAudibleBoundedSound() throws {
         var driver = try driver()
         driver.setHeartbeat(own: 100, enemy: 300)

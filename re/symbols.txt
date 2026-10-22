@@ -133,7 +133,7 @@
 000759c4 conquest_world         ; word, world number reached in the conquest
 0006c342 draw_bar               ; (screen, byte column, y, max, value, colour): 4 pixels wide, upwards
 0006c70a vblank_interrupt       ; mouse, keyboard, then music step every 10 interrupts, effects and heartbeat
-0006d570 play_instrument        ; (instrument, channel): louder-or-equal instruments cut in; optional looped tail
+0006d570 play_instrument        ; (instrument, channel): louder-or-equal instruments cut in; optional looped tail, whose cycle count is an unfilled stack slot (high word of A2)
 0006d646 queue_audio_write      ; (io, instrument*, offset, cycles)
 0006d6ca sequencer_step         ; reads 4 channel bytes of the current pattern step; byte - 0x41 = instrument
 0006d9f2 load_music             ; (filename): gmusic1 in play, gwords for the lord's speech

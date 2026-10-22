@@ -63,7 +63,9 @@ public struct MusicFile: Sendable {
 
     public struct Sample: Sendable, Equatable {
         public let pcm: [Int8]
-        /// How many times the looped part repeats (0 = until cut off).
+        /// The directory's second word: the length again for most samples, 0 for the
+        /// looped ones. The game pushes it with the loop point but, by a calling
+        /// mismatch, never reads it as a repeat count (see `SoundDriver.tailRepeats`).
         public let loopCycles: Int
     }
 

@@ -39,6 +39,14 @@ public struct SoundDriver: Sendable {
 
     public var musicOn = true
     public var effectsOn = true
+    /// Times a looped tail plays after the first pass. The original's play routine
+    /// pushes the loop point as two words but its audio write reads a long offset
+    /// and then a word count from the slot after it, which nobody filled: the
+    /// count is the high word of whatever register A2 held when the interrupt
+    /// struck. On a 512K Amiga with the game's tables at $7xxxx that is 7; the
+    /// alternative, 0, would loop until cut off, and nothing in the song is loud
+    /// enough to cut off the earthquake.
+    static let tailRepeats = 7
     /// Interrupts between heartbeats (0 for none), and how long before each beat
     /// its echo sounds. The game sets these from the two populations.
     public var beatPeriod = 0
@@ -105,7 +113,7 @@ public struct SoundDriver: Sendable {
             channels[channel].queue.append(
                 .init(
                     sample: instrument.sample, start: instrument.loopStart, length: length - instrument.loopStart,
-                    cycles: music.samples[instrument.sample].loopCycles))
+                    cycles: Self.tailRepeats))
         }
     }
 
